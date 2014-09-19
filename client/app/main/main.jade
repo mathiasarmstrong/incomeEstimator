@@ -1,0 +1,30 @@
+div(ng-include='"components/navbar/navbar.html"')
+
+header#banner.hero-unit
+  .container(ng-controller = 'IntroCtrl')
+    h1 Welcome to {{appname}}
+    p.lead Please mark all that are true
+
+div(ng-controller='AccordionCtrl')
+  accordion(close-others="oneAtATime")
+    accordion-group(heading="{{group.title}}", ng-repeat="group in groups")
+      ul.list-group
+        li.list-group-item(ng-repeat="item in group.content")
+          .container
+            .col-xs-1
+              input.left(type='checkbox' ng-model = 'item.answer')
+            .col-xs-6 {{item.question}}
+    accordion-group(heading="Hours")
+      .container
+        .col-xs-4
+          input.left(type='text' ng-model = 'hours' ng-submit = "graphInfoUpdate()")
+        .col-xs-6 How many hours do you intend to work?
+
+
+
+
+.container
+  .row(ng-controller = 'GraphCtrl')
+    .col-xs-10
+      a.button(ng-click='updategraph()') Check my potential earnings
+      nvd3(options="options" data="data")
