@@ -17,14 +17,14 @@ div(ng-controller='AccordionCtrl')
     accordion-group(heading="Hours")
       .container
         .col-xs-4
-          input.left(type='text' ng-model = 'hours' ng-submit = "graphInfoUpdate()")
+          input.left(type='text' ng-model='time.hours' ng-submit= "graphInfoUpdate()")
         .col-xs-6 How many hours do you intend to work?
+  .container
+    .row
+      .col-xs-10.text-center
+        a.btn.btn-default.btn-lg(ng-click='graphInfoUpdate()') Check my potential earnings
+        h2 Based on {{time.hours}} hours a week
+        nvd3(options="options" data="data")
 
 
 
-
-.container
-  .row(ng-controller = 'GraphCtrl')
-    .col-xs-10
-      a.button(ng-click='updategraph()') Check my potential earnings
-      nvd3(options="options" data="data")

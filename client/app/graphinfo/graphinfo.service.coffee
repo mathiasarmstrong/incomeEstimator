@@ -3,23 +3,22 @@
 angular.module 'angulard31App'
 .factory 'graphinfo', ->
 
-  vars=
-    defaultInsuranceRate: 27
-    defaultGasPrice: 4.50
-    defaultMilesPerHourDriving:8
-    defaultLeaseCost:100
-    avgIncomePerHour: 27
-  vars.info=
-    Parking: 40
-    Insurance:1
-    Car:20
-    hours:20
+  #Equation simple for now, can be made more complex as we go
 
-  #Random Data Generator
-
-  costEarnings = ->
+  costEarnings =(info)->
     cost = []
     earnings = []
+    info ?= {}
+    info.Parking ?= 40
+    info.Insurance ?= 1
+    info.Car ?= 20
+    info.hours ?= 20
+    vars=
+      defaultInsuranceRate: 27
+      defaultGasPrice: 4.50
+      defaultMilesPerHourDriving:8
+      defaultLeaseCost:100
+      avgIncomePerHour: 27
 
     #Data is represented as an array of {x,y} pairs.
     i = 0
@@ -27,11 +26,11 @@ angular.module 'angulard31App'
     while i < 52
       cost.push
         x: i
-        y: (vars.defaultInsuranceRate*vars.info.Insurance + vars.info.Parking + vars.defaultLeaseCost + ((vars.info.hours*vars.defaultMilesPerHourDriving)/vars.info.Car)*vars.defaultGasPrice)*i
+        y: (vars.defaultInsuranceRate*info.Insurance + info.Parking + vars.defaultLeaseCost + ((info.hours*vars.defaultMilesPerHourDriving)/info.Car)*vars.defaultGasPrice)*i
 
       earnings.push
         x: i
-        y: (vars.avgIncomePerHour*20)*i
+        y: (vars.avgIncomePerHour*info.hours)*i
 
       i++
 
@@ -50,14 +49,8 @@ angular.module 'angulard31App'
         area: true
       }
     ]
-  # Service logic
-  # weekly info
-  # averageInsurance = 28
-  # averageGas =
 
-  # Public API here
-
-
+  # Setting options and questions, may be changed out for a database call
   options =
     chart:
       type: "lineChart"
@@ -75,61 +68,63 @@ angular.module 'angulard31App'
         d.y
 
       useInteractiveGuideline: true
-      dispatch:
-        stateChange: (e) ->
-          console.log "stateChange"
-          return
-
-        changeState: (e) ->
-          console.log "changeState"
-          return
-
-        tooltipShow: (e) ->
-          console.log "tooltipShow"
-          return
-
-        tooltipHide: (e) ->
-          console.log "tooltipHide"
-          return
 
       xAxis:
         axisLabel: "Time(weeks)"
 
       yAxis:
-        axisLabel: "Income(dollars)"
+        axisLabel: "Earnings($)"
         tickFormat: (d) ->
           d3.format("$100") d
 
         axisLabelDistance: 30
 
-      callback: (chart) ->
-        console.log "!!! lineChart callback !!!"
-        return
-
-    title:
-      enable: false
-      text: "none"
-
-    subtitle:
-      enable: false
-      text: "Subtitle for simple line chart."
-      css:
-        "text-align": "center"
-        margin: "10px 13px 0px 7px"
-
-    caption:
-      enable: false
-      html: "<b>Figure 1.</b>"
-      css:
-        "text-align": "justify"
-        margin: "10px 13px 0px 7px"
-
-  data = costEarnings()
-
-  options:options
-  data:data
-  update:->
-    data:costEarnings()
-    return
 
 
+  questions=[
+    {title: 'Parking',
+    content:[
+      {question:"Have Garage parking available",
+      answer:false,
+      value:0},
+      {question:"Street Parking available",
+      answer:false,
+      value:10},
+      {question:"Will be paying for parking",
+      answer:false,
+      value:40}
+    ]},
+    {title: 'Insurance',
+    content:[
+      {question:"Have insurance on another vehicle",
+      answer:false,
+      value:0.8},
+      {question:"Have had vehicle insurance for the past 2 years",
+      answer:false,
+      value:0.8},
+      {question:"Have not been in accident in the past 2 years",
+      answer:false,
+      value:0.9},
+      {question:'I am younger than 25',
+      answer:false,
+      value:1.25}
+    ]},
+    {title: 'Car',
+    content:[
+      {question:'I get less than 25 mpg',
+      answer:false,
+      value:20},
+      {question:'I get at least 25 mpg',
+      answer:false,
+      value:25},
+      {question:'I get at least 40 mpg',
+      answer:false,
+      value:40}
+    ]
+    }
+    ]
+  # Public API here
+
+  equation: costEarnings
+  options: options
+  questions:questions
